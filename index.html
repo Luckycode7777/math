@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажёр Арифметики</title>
+    <meta name="description" content="Math Trainer / Тренажёр Арифметики">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Math Trainer">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .settings-toggle {
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-settings {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 10px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .btn-settings:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-lang {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            color: #2c3e50;
+            transition: all 0.3s;
+        }
+
+        .btn-lang:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(253, 203, 110, 0.4);
+        }
+
+        .settings-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            margin-bottom: 0;
+        }
+
+        .settings-panel.open {
+            max-height: 600px;
+            margin-bottom: 20px;
+        }
+
+        .menu-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .menu-title {
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .timer-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .timer-input input {
+            width: 80px;
+            padding: 8px;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .game-area {
+            background: white;
+            border: 3px solid #3498db;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 25px 0;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .expression {
+            font-size: 48px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .answer {
+            font-size: 42px;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-stop {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .btn-stop:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(250, 112, 154, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .expression {
+                font-size: 36px;
+            }
+
+            .answer {
+                font-size: 32px;
+            }
+
+            button {
+                padding: 12px 24px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 data-lang-ru="Тренажёр Арифметики" data-lang-en="Math Trainer">Тренажёр Арифметики</h1>
+
+        <div class="settings-toggle">
+            <button class="btn-settings" id="settingsBtn" data-lang-ru="⚙️ Настройки" data-lang-en="⚙️ Settings">⚙️ Настройки</button>
+            <button class="btn-lang" id="langBtn">EN</button>
+        </div>
+
+        <div class="settings-panel" id="settingsPanel">
+            <div class="menu-section">
+                <div class="menu-title" data-lang-ru="Арифметическое действие:" data-lang-en="Operation:">Арифметическое действие:</div>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="operation" value="addition" checked>
+                        <span data-lang-ru="Сложение" data-lang-en="Addition">Сложение</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="operation" value="subtraction">
+                        <span data-lang-ru="Вычитание" data-lang-en="Subtraction">Вычитание</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-title" data-lang-ru="Диапазон чисел:" data-lang-en="Number Range:">Диапазон чисел:</div>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="numberRange" value="10">
+                        <span data-lang-ru="До 10" data-lang-en="Up to 10">До 10</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="numberRange" value="20">
+                        <span data-lang-ru="До 20" data-lang-en="Up to 20">До 20</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="numberRange" value="50" checked>
+                        <span data-lang-ru="До 50" data-lang-en="Up to 50">До 50</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="numberRange" value="100">
+                        <span data-lang-ru="До 100" data-lang-en="Up to 100">До 100</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="numberRange" value="1000">
+                        <span data-lang-ru="До 1000" data-lang-en="Up to 1000">До 1000</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-title" data-lang-ru="Вывод ответа:" data-lang-en="Answer Display:">Вывод ответа:</div>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="answerMode" value="manual" checked>
+                        <span data-lang-ru="Ручное" data-lang-en="Manual">Ручное</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="answerMode" value="auto">
+                        <span data-lang-ru="Автоматическое" data-lang-en="Automatic">Автоматическое</span>
+                    </label>
+                </div>
+                <div class="timer-input" id="timerInput" style="display: none;">
+                    <span data-lang-ru="Таймер (сек):" data-lang-en="Timer (sec):">Таймер (сек):</span>
+                    <input type="number" id="timerValue" value="5" min="1" max="60">
+                </div>
+            </div>
+        </div>
+
+        <div class="game-area" id="gameArea">
+            <div class="expression" id="expression" data-lang-ru='Нажмите "Старт"' data-lang-en='Press "Start"'>Нажмите "Старт"</div>
+            <div class="answer hidden" id="answer"></div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn-start" id="startBtn" data-lang-ru="Старт" data-lang-en="Start">Старт</button>
+            <button class="btn-next hidden" id="nextBtn" data-lang-ru="Следующее" data-lang-en="Next">Следующее</button>
+            <button class="btn-stop hidden" id="stopBtn" data-lang-ru="Закончить" data-lang-en="Stop">Закончить</button>
+        </div>
+    </div>
+
+    <script>
+        let currentNum1, currentNum2, currentOperation, correctAnswer;
+        let gameActive = false;
+        let answerShown = false;
+        let autoTimer = null;
+        let currentLang = 'ru';
+
+        const startBtn = document.getElementById('startBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const expressionEl = document.getElementById('expression');
+        const answerEl = document.getElementById('answer');
+        const timerInput = document.getElementById('timerInput');
+        const timerValue = document.getElementById('timerValue');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const langBtn = document.getElementById('langBtn');
+
+        const translations = {
+            settingsOpen: { ru: '✕ Закрыть', en: '✕ Close' },
+            settingsClose: { ru: '⚙️ Настройки', en: '⚙️ Settings' },
+            showAnswer: { ru: 'Показать ответ', en: 'Show Answer' },
+            next: { ru: 'Следующее', en: 'Next' }
+        };
+
+        function switchLanguage() {
+            currentLang = currentLang === 'ru' ? 'en' : 'ru';
+            langBtn.textContent = currentLang === 'ru' ? 'EN' : 'RU';
+
+            document.querySelectorAll('[data-lang-ru]').forEach(el => {
+                el.textContent = el.getAttribute(`data-lang-${currentLang}`);
+            });
+
+            if (settingsPanel.classList.contains('open')) {
+                settingsBtn.textContent = translations.settingsOpen[currentLang];
+            }
+
+            if (!gameActive) {
+                expressionEl.textContent = currentLang === 'ru' ? 'Нажмите "Старт"' : 'Press "Start"';
+            }
+
+            if (gameActive && !answerShown && document.querySelector('input[name="answerMode"]:checked').value === 'manual') {
+                nextBtn.textContent = translations.showAnswer[currentLang];
+            }
+        }
+
+        langBtn.addEventListener('click', switchLanguage);
+
+        settingsBtn.addEventListener('click', () => {
+            settingsPanel.classList.toggle('open');
+            settingsBtn.textContent = settingsPanel.classList.contains('open')
+                ? translations.settingsOpen[currentLang]
+                : translations.settingsClose[currentLang];
+        });
+
+        document.querySelectorAll('input[name="answerMode"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                timerInput.style.display = e.target.value === 'auto' ? 'flex' : 'none';
+            });
+        });
+
+        function getRandomNumber() {
+            const range = parseInt(document.querySelector('input[name="numberRange"]:checked').value);
+            return Math.floor(Math.random() * range) + 1;
+        }
+
+        function generateExpression() {
+            const operation = document.querySelector('input[name="operation"]:checked').value;
+            currentNum1 = getRandomNumber();
+            currentNum2 = getRandomNumber();
+
+            if (operation === 'addition') {
+                currentOperation = '+';
+                correctAnswer = currentNum1 + currentNum2;
+            } else {
+                currentOperation = '−';
+                if (currentNum1 < currentNum2) {
+                    [currentNum1, currentNum2] = [currentNum2, currentNum1];
+                }
+                correctAnswer = currentNum1 - currentNum2;
+            }
+
+            expressionEl.textContent = `${currentNum1} ${currentOperation} ${currentNum2}`;
+            answerEl.classList.add('hidden');
+            answerShown = false;
+        }
+
+        function showAnswer() {
+            answerEl.textContent = `= ${correctAnswer}`;
+            answerEl.classList.remove('hidden');
+            answerShown = true;
+        }
+
+        function startGame() {
+            gameActive = true;
+            startBtn.classList.add('hidden');
+            stopBtn.classList.remove('hidden');
+
+            const answerMode = document.querySelector('input[name="answerMode"]:checked').value;
+
+            if (answerMode === 'manual') {
+                nextBtn.classList.remove('hidden');
+            }
+
+            generateExpression();
+
+            if (answerMode === 'auto') {
+                startAutoMode();
+            }
+        }
+
+        function startAutoMode() {
+            const seconds = parseInt(timerValue.value) * 1000;
+
+            autoTimer = setTimeout(() => {
+                if (gameActive) {
+                    showAnswer();
+                    autoTimer = setTimeout(() => {
+                        if (gameActive) {
+                            generateExpression();
+                            startAutoMode();
+                        }
+                    }, seconds);
+                }
+            }, seconds);
+        }
+
+        function stopGame() {
+            gameActive = false;
+            if (autoTimer) {
+                clearTimeout(autoTimer);
+                autoTimer = null;
+            }
+            startBtn.classList.remove('hidden');
+            nextBtn.classList.add('hidden');
+            stopBtn.classList.add('hidden');
+            expressionEl.textContent = currentLang === 'ru' ? 'Нажмите "Старт"' : 'Press "Start"';
+            answerEl.classList.add('hidden');
+        }
+
+        startBtn.addEventListener('click', startGame);
+
+        nextBtn.addEventListener('click', () => {
+            if (!answerShown) {
+                showAnswer();
+                nextBtn.textContent = translations.next[currentLang];
+            } else {
+                generateExpression();
+                nextBtn.textContent = translations.showAnswer[currentLang];
+            }
+        });
+
+        stopBtn.addEventListener('click', stopGame);
+
+        nextBtn.textContent = translations.showAnswer[currentLang];
+
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        }
+    </script>
+</body>
+</html>
