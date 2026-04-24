@@ -25,6 +25,11 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            transition: background 0.5s ease;
+        }
+
+        body.blue-theme {
+            background: linear-gradient(135deg, #a8d8ea 0%, #d4e9f7 100%);
         }
 
         .container {
@@ -84,6 +89,27 @@
         .btn-lang:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(253, 203, 110, 0.4);
+        }
+
+        .btn-theme {
+            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc8 100%);
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            color: #2c3e50;
+            transition: all 0.3s;
+        }
+
+        .btn-theme:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(168, 230, 207, 0.4);
+        }
+
+        body.blue-theme .btn-theme {
+            background: linear-gradient(135deg, #a8d8ea 0%, #d4e9f7 100%);
         }
 
         .settings-panel {
@@ -254,6 +280,7 @@
         <div class="settings-toggle">
             <button class="btn-settings" id="settingsBtn" data-lang-ru="⚙️ Настройки" data-lang-en="⚙️ Settings">⚙️ Настройки</button>
             <button class="btn-lang" id="langBtn">EN</button>
+            <button class="btn-theme" id="themeBtn" data-lang-ru="🎨" data-lang-en="🎨">🎨</button>
         </div>
 
         <div class="settings-panel" id="settingsPanel">
@@ -267,6 +294,14 @@
                     <label class="radio-option">
                         <input type="radio" name="operation" value="subtraction">
                         <span data-lang-ru="Вычитание" data-lang-en="Subtraction">Вычитание</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="operation" value="multiplication">
+                        <span data-lang-ru="Умножение" data-lang-en="Multiplication">Умножение</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="operation" value="division">
+                        <span data-lang-ru="Деление" data-lang-en="Division">Деление</span>
                     </label>
                 </div>
             </div>
@@ -345,6 +380,7 @@
         const settingsBtn = document.getElementById('settingsBtn');
         const settingsPanel = document.getElementById('settingsPanel');
         const langBtn = document.getElementById('langBtn');
+        const themeBtn = document.getElementById('themeBtn');
 
         const translations = {
             settingsOpen: { ru: '✕ Закрыть', en: '✕ Close' },
@@ -376,6 +412,16 @@
 
         langBtn.addEventListener('click', switchLanguage);
 
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('blue-theme');
+            localStorage.setItem('theme', document.body.classList.contains('blue-theme') ? 'blue' : 'green');
+        });
+
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'blue') {
+            document.body.classList.add('blue-theme');
+        }
+
         settingsBtn.addEventListener('click', () => {
             settingsPanel.classList.toggle('open');
             settingsBtn.textContent = settingsPanel.classList.contains('open')
@@ -402,12 +448,19 @@
             if (operation === 'addition') {
                 currentOperation = '+';
                 correctAnswer = currentNum1 + currentNum2;
-            } else {
+            } else if (operation === 'subtraction') {
                 currentOperation = '−';
                 if (currentNum1 < currentNum2) {
                     [currentNum1, currentNum2] = [currentNum2, currentNum1];
                 }
                 correctAnswer = currentNum1 - currentNum2;
+            } else if (operation === 'multiplication') {
+                currentOperation = '×';
+                correctAnswer = currentNum1 * currentNum2;
+            } else if (operation === 'division') {
+                currentOperation = '÷';
+                correctAnswer = currentNum1;
+                currentNum1 = correctAnswer * currentNum2;
             }
 
             expressionEl.textContent = `${currentNum1} ${currentOperation} ${currentNum2}`;
